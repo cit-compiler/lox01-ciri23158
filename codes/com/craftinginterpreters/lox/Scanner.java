@@ -24,10 +24,24 @@ List<Token> scanTokens() {
     tokens.add(new Token(EOF, "", null, line));
     return tokens;
   }
-    private boolean isAtEnd() {
+  private boolean isAtEnd() {
     return current >= source.length();
   }
-    private void scanToken() {
+
+  private char advance() {
+    return source.charAt(current++);
+  }
+
+  private void addToken(TokenType type) {
+    addToken(type, null);
+  }
+
+  private void addToken(TokenType type, Object literal) {
+    String text = source.substring(start, current);
+    tokens.add(new Token(type, text, literal, line));
+  }
+
+  private void scanToken() {
     char c = advance();
     switch (c) {
       case '(': addToken(LEFT_PAREN); break;
@@ -39,7 +53,7 @@ List<Token> scanTokens() {
       case '-': addToken(MINUS); break;
       case '+': addToken(PLUS); break;
       case ';': addToken(SEMICOLON); break;
-      case '*': addToken(STAR); break;  
+      case '*': addToken(STAR); break;   
       case '!':
         addToken(match('=') ? BANG_EQUAL : BANG);
         break;
@@ -110,18 +124,5 @@ List<Token> scanTokens() {
   private char peek() {
     if (isAtEnd()) return '\0';
     return source.charAt(current);
-  }
-
-  private char advance() {
-    return source.charAt(current++);
-  }
-
-  private void addToken(TokenType type) {
-    addToken(type, null);
-  }
-
-  private void addToken(TokenType type, Object literal) {
-    String text = source.substring(start, current);
-    tokens.add(new Token(type, text, literal, line));
   }
 }
